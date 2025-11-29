@@ -1,0 +1,35 @@
+services:
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - server-a
+      - server-b
+    networks:
+      - appnet
+
+  server-a:
+    build: ./server-a
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/data
+    depends_on:
+      - server-b
+    networks:
+      - appnet
+
+  server-b:
+    build: ./server-b
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./data:/data
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
