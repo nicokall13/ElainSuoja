@@ -10,14 +10,14 @@ const adoptionsFile = path.resolve("/data/adoptions.json");
 // POST /adoptions
 router.post("/", (req, res) => {
   const { animalId, adopterName, email } = req.body;
-
+  // Lukee tiedot
   const animals = JSON.parse(fs.readFileSync(animalsFile, "utf8"));
   const adoptions = JSON.parse(fs.readFileSync(adoptionsFile, "utf8"));
-
+  // Tarkistaa löytyykö eläin
   const animal = animals.find((a) => a.id == animalId);
 
   if (!animal) return res.status(404).json({ error: "Eläintä ei löydy" });
-
+  // Onko adoptoitu
   if (animal.status === "adoptoitu")
     return res.status(400).json({ error: "On jo adoptoitu" });
 

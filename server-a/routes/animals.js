@@ -20,7 +20,7 @@ router.get("/:id", (req, res) => {
   res.json(animal);
 });
 
-// POST /animals/:id/adopt
+// POST /animals/:id/adopt Adoptio pyyntö
 router.post("/:id/adopt", async (req, res) => {
   const animalId = req.params.id;
   const body = req.body;

@@ -19,6 +19,7 @@ app.get("/animals", async (req, res) => {
   }
 });
 
+// Portti ja Käynnistys
 const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Server B running on port ${PORT}`);

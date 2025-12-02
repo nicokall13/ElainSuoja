@@ -1,15 +1,16 @@
 const API = "/api";
-
+// Mikä sivu auki
 const page = window.location.pathname;
 
-// Etusivu
+// Etusivu eläin listan lataus
 if (page === "/" || page.includes("index.html")) {
+  // API kutsu server-b
   fetch(`${API}/animals`)
     .then((res) => res.json())
     .then((animals) => {
       const list = document.getElementById("animalList");
 
-      // Tässä AI auttoi kun en saanut kuvia näkyviin.
+      // Eläinkorttien generointi
       list.innerHTML = animals
         .map((a) => {
           const img =
@@ -29,20 +30,21 @@ if (page === "/" || page.includes("index.html")) {
         .join("");
     });
 }
-
+// Siirtyminen omalle sivulle
 function viewAnimal(id) {
   window.location = `animal.html?id=${id}`;
 }
 
-// Eläinsivu
+// Eläinsivu haetaan url id perusteella
 if (page.endsWith("animal.html")) {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
 
+  //Yksittäinen eläin tiedot
   fetch(`${API}/animals/${id}`)
     .then((res) => res.json())
     .then((a) => {
-      // Samoin tässä käytin AIta kuviin liittyen.
+      // Tässä AI apuna
       const img =
         a.image && a.image.trim() !== ""
           ? `/kuvat/${a.image}`
@@ -57,7 +59,7 @@ if (page.endsWith("animal.html")) {
             <p><strong>Status:</strong> ${a.status}</p>
         `;
     });
-
+  // Lomake
   document.getElementById("adoptForm").addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -65,7 +67,7 @@ if (page.endsWith("animal.html")) {
       adopterName: document.getElementById("name").value,
       email: document.getElementById("email").value,
     };
-
+    // Postaa adoptio ja näytä kiitos
     fetch(`${API}/animals/${id}/adopt`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

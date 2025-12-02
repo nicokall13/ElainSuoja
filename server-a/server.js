@@ -7,10 +7,10 @@ app.use(express.json());
 // Kuvien haku, AI suositus
 app.use("/kuvat", express.static("/data/kuvat"));
 
-// Routes
+// Reitit
 app.use("/animals", animalsRouter);
 
-// Portti
+// Portti ja Käynnistys
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server A running on port ${PORT}`);
