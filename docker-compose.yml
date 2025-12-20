@@ -1,5 +1,6 @@
-services:
 
+services:
+  # 1. Frontend - Nginx toimii porttina ulkomaailmaan (8080)
   frontend:
     build: ./frontend
     ports:
@@ -8,28 +9,36 @@ services:
       - server-a
       - server-b
     networks:
-      - appnet
+      - elainsuoja-network
 
+  # 2. Server-A - Julkinen API (Portti 3000)
   server-a:
     build: ./server-a
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/data
-    depends_on:
-      - server-b
+      - ./data:/app/data
     networks:
-      - appnet
+      - elainsuoja-network
+    environment:
+      - NODE_ENV=production
 
+  # 3. Server-B - Admin API (Portti 4000)
   server-b:
     build: ./server-b
     ports:
       - "4000:4000"
     volumes:
-      - ./data:/data
+      - ./data:/app/data
     networks:
-      - appnet
+      - elainsuoja-network
+    environment:
+      - NODE_ENV=production
 
 networks:
-  appnet:
+  elainsuoja-network:
     driver: bridge
+
+volumes:
+  # SQLite-tietokanta tallentuu tähän paikalliseen kansioon
+  data:

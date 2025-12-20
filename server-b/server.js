@@ -1,26 +1,59 @@
-import express from "express";
-import adoptionsRouter from "./routes/adoptions.js";
+const express = require("express");
+const sqlite3 = require("sqlite3");
+const { open } = require("sqlite");
+const path = require("path");
 
 const app = express();
+const PORT = 4000;
+
+// Middleware JSON-datan käsittelyyn
 app.use(express.json());
 
-// Adoptio-reitit
-app.use("/adoptions", adoptionsRouter);
+let db;
 
-// Eläinlista frontendille
-app.get("/animals", async (req, res) => {
+/**
+ * Käynnistysfunktio:
+ * 1. Avaa yhteys tietokantaan
+ * 2. Käynnistää Express-palvelimen vasta kun yhteys on valmis
+ */
+async function startServer() {
   try {
-    const response = await fetch("http://server-a:3000/animals");
-    const animals = await response.json();
-    res.json(animals);
-  } catch (err) {
-    console.error("Error fetching animals from Server A:", err);
-    res.status(500).json({ error: "Failed to fetch animals" });
+    db = await open({
+      filename: "/app/data/elainsuoja.db",
+      driver: sqlite3.Database,
+    });
+    console.log("Server-B: Yhteys SQLite-tietokantaan muodostettu.");
+
+    // Käynnistetään palvelin kuuntelemaan porttia
+    app.listen(PORT, () => {
+      console.log(`Server-B (Admin API) pyörii portissa ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Server-B käynnistys epäonnistui:", error);
+    process.exit(1); // Lopetetaan prosessi kriittiseen virheeseen
+  }
+}
+
+// Määritellään reitit (Routes)
+
+// GET: Hae kaikki hakemukset ja yhdistä eläimen nimi JOIN-kyselyllä
+app.get("/admin/adoptions", async (req, res) => {
+  try {
+    // Haetaan hakemukset ja liitetään niihin eläimen nimi animals-taulusta
+    const query = `
+            SELECT 
+                adoptions.*, 
+                animals.name as animal_name 
+            FROM adoptions 
+            JOIN animals ON adoptions.animal_id = animals.id
+        `;
+    const adoptions = await db.all(query);
+    res.json(adoptions);
+  } catch (error) {
+    console.error("Virhe hakemusten haussa:", error);
+    res.status(500).json({ error: "Hakemusten haku epäonnistui." });
   }
 });
 
-// Portti ja Käynnistys
-const PORT = 4000;
-app.listen(PORT, () => {
-  console.log(`Server B running on port ${PORT}`);
-});
+// Suoritetaan käynnistys
+startServer();
