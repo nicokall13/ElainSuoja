@@ -38,7 +38,3 @@ services:
 networks:
   elainsuoja-network:
     driver: bridge
-
-volumes:
-  # SQLite-tietokanta tallentuu tähän paikalliseen kansioon
-  data:

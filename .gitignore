@@ -1,9 +1,10 @@
-# Riippuvuudet (ladataan npm installilla)
+# Riippuvuudet
 node_modules/
 dist/
 scripts_and_data/
+.vscode/
 
-# Tietokanta (Luodaan migraatiolla/ympäristökohtaisesti)
+# Tietokanta
 data/*.db
 data/*.db-journal
 
@@ -18,5 +19,5 @@ logs/
 .DS_Store
 Thumbs.db
 
-# Ympäristömuuttujat (mahdolliset salaisuudet)
+# Ympäristömuuttujat
 .env
